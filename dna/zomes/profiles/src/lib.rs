@@ -42,7 +42,8 @@ fn get_agent_profile(agent_pub_key: AgentPubKey) -> ExternResult<Option<Profile>
         return Ok(None);
     }
 
-    match agent_to_profile_links.get(0) {
+    let first_link = agent_to_profile_links.get(0);
+    match first_link {
         Some(link) => {
             let record = get(ActionHash::from(link.clone().target), GetOptions::default())?.unwrap();
             let record_entry = record.entry().clone();
@@ -54,18 +55,6 @@ fn get_agent_profile(agent_pub_key: AgentPubKey) -> ExternResult<Option<Profile>
         },
         _ => Ok(None)
     }
-
-    // let link = &agent_to_profile_links[0];
-    // let holo_hash = link.clone().target;
-    // let action_hash = ActionHash::from(holo_hash);
-    // let record = get(action_hash, GetOptions::default())?;
-    // let record_entry = record.entry().clone();
-    
-    // let profile = match record_entry {
-
-    // }
-    // Ok(None)
-
 }
 // fn get_record_from_link(link: Link) -> Option<RecordEntry> {
 //     let holo_hash = link.clone().target;
@@ -74,10 +63,10 @@ fn get_agent_profile(agent_pub_key: AgentPubKey) -> ExternResult<Option<Profile>
 //     // let record_entry = record.entry().clone();
 // }
 
-// #[hdk_extern]
-// fn get_my_profile(public_key: AgentPubKey) -> ExternResult<Option<Profile>> {
-//   get_agent_profile(agent_info()?.agent_latest_pubkey)
-// }
+#[hdk_extern]
+fn get_my_profile(_: ()) -> ExternResult<Option<Profile>> {
+  get_agent_profile(agent_info()?.agent_latest_pubkey)
+}
 
 /**
  * DON'T TOUCH
