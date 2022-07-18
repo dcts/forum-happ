@@ -12,6 +12,21 @@ enum EntryTypes {
   Post(Post)
 }
 
+#[derive(Debug, Deserialize)]
+struct CreatePostInput {
+  post: Post,
+}
+
+#[hdk_extern]
+fn create_post(create_post_input: CreatePostInput) -> ExternResult<ActionHash> {
+  let post = create_post_input.post;
+  let entry_type = EntryTypes::Post(post);
+  let create_entry_action_hash = create_entry(entry_type)?;
+  Ok(create_entry_action_hash)
+}
+
+
+
 /**
  * DON'T TOUCH
  */
