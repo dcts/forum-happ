@@ -45,19 +45,33 @@ fn create_comment(create_comment_input: CreateCommentInput) -> ExternResult<Acti
 }
 
 #[hdk_extern]
-fn get_comments_on(_: ActionHash) -> ExternResult<()> {
+fn get_comments_on(action_hash: ActionHash) -> ExternResult<Vec<Record>> {
     // 1. get all links where base hash is our action hash
     // get_links
+    let links = get_links(
+        action_hash,
+        LinkTypes::CommentedOnToComment,
+        None
+    )?;
 
-    // 2. 
+    // 2. retrieve all records from the target hash and put it in a vector
+    let mut records: Vec<Record> = Vec::new();
+    for link in links.iter() {
+        let mylink = link.clone();
+        let target = mylink.target;
+        let link_action_hash = ActionHash::from(target);
+        let record = get(link_action_hash, GetOptions::default());
+        match record {
+            Ok(record_option) => match record_option {
+                Some(record) => records.push(record),
+                None => (),
+            },
+            Err(_) => (),
+        }
+    }
 
-    // let links: Vec<Link> = get_links(
-    //     author,  // Base hash 
-    //     LinkTypes::AuthorToComment,  // Link Type
-    //     None,  // Filter on link tag prefix
-    //   )?;
-
-    Ok(())
+    // 3. return a vector of records
+    Ok(records)
 }
 
 /**
