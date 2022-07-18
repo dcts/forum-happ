@@ -15,6 +15,7 @@ enum EntryTypes {
 #[derive(Debug, Deserialize)]
 struct CreatePostInput {
   post: Post,
+  channel: String,
 }
 
 #[hdk_extern]
