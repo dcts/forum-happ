@@ -60,13 +60,9 @@ fn get_comments_on(action_hash: ActionHash) -> ExternResult<Vec<Record>> {
         let mylink = link.clone();
         let target = mylink.target;
         let link_action_hash = ActionHash::from(target);
-        let record = get(link_action_hash, GetOptions::default());
-        match record {
-            Ok(record_option) => match record_option {
-                Some(record) => records.push(record),
-                None => (),
-            },
-            Err(_) => (),
+        let maybe_record = get(link_action_hash, GetOptions::default())?;
+        if let Some(record) = maybe_record {
+            records.push(record)
         }
     }
 
