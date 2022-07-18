@@ -70,6 +70,12 @@ fn get_comments_on(action_hash: ActionHash) -> ExternResult<Vec<Record>> {
     Ok(records)
 }
 
+#[hdk_extern]
+fn delete_comment(action_hash: ActionHash) -> ExternResult<()> {
+    delete_entry(action_hash)?;
+    Ok(())
+}
+
 /**
  * DON'T TOUCH
  */
