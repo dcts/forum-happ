@@ -10,7 +10,7 @@ struct Post {
 #[unit_enum(UnitTypes)]
 enum EntryTypes {
     Post(Post),
-    // Anchor(Anchor)
+    Anchor(Anchor)
 }
 
 #[derive(Debug, Deserialize)]
@@ -25,8 +25,8 @@ enum LinkTypes {
     ChannelToPost,  
 }
 
-// #[hdk_entry_helper]
-// struct Anchor(String);
+#[hdk_entry_helper]
+struct Anchor(String);
 
 #[hdk_extern]
 fn create_post(create_post_input: CreatePostInput) -> ExternResult<ActionHash> {
@@ -61,6 +61,7 @@ fn get_channel_posts(channel: String) -> ExternResult<Vec<ActionHash>> {
     // 🚧 WHY THIS TESTS GREEN ALTHOUGH TYPO?
     // let anchor = Anchor(format!("alsl_posts.{}", channel));
     // let anchor_hash = create_entry(EntryTypes::Anchor(anchor))?;
+    // => hash_entry(PATH) => to get the same anchor
 
     // get root hash
     // let root_hash = hdk::hash_path::path::root_hash()?;
@@ -125,34 +126,32 @@ fn get_all_channels(_: ()) -> ExternResult<Vec<String>> {
 
     Ok(channels)
 
-    // let path_entry_hash = path.path_entry_hash()?;
-
-    // Get all child_paths
-    // path.children();
-    // then get their leafs
-
-    // ANCHORS
-    // let a = hdk::hash_path::anchor::Anchor::from(path);
-    
     // DOES THIS WORK TOO???
-    // let links = get_links(
-    //     path_entry_hash,
-    //     LinkTypes::PathToChannel,
-    //     None
-    // )?;
-    // let mut channels: Vec<String> = Vec::new();
-    // for link in links {
-    //     // get target
-    //     let x = link.target;
-    //     let y = ActionHash::from(x);
-    //     let record = get(y, GetOptions::default())?;
-    //     match record {
-    //         Some(record) => {
-    //             Path::from(record);
-    //         },
-    //         _ => (),
-    //     }
+    // - construction your own anchor
+    // - then getting all links from the anchor
+    // - filter by LinkTypes::PathToChannel
+    // - get all the targets => extract the name of the path somehow? How?
+    // let a = hdk::hash_path::anchor::Anchor::from(path);
+
 }
+
+#[derive(Debug, Deserialize)]
+struct UpdatePostInput {
+    updated_post: Post,
+    post_to_update: ActionHash,
+}
+
+#[hdk_extern] 
+fn update_post(update_post_input: UpdatePostInput) -> ExternResult<ActionHash> {
+    let updated_post = update_post_input.updated_post;
+    let post_to_update = update_post_input.post_to_update;
+    let update_post_action_hash = update_entry(
+        post_to_update, 
+        EntryTypes::Post(updated_post),
+    )?;
+
+    Ok(update_post_action_hash)
+}   
 /**
  * DON'T TOUCH
  */
