@@ -33,3 +33,11 @@ fn get_channel_posts(channel: String) -> ExternResult<Vec<ActionHash>> {
 }
 ```
 
+
+### NAMESPACED
+- validate
+- genesis_self_check
+
+### NOT NAMESPACES
+- notify
+- notify_ui
